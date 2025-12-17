@@ -12,3 +12,4 @@ export const ENDPOINTS = {
     UPDATE_PROFILE: "/api/auth/profile/update",
   },
 }
+
