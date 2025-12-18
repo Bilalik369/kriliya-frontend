@@ -61,7 +61,7 @@ export const authService = {
       await storage.removeItem(StorageKeys.USER)
       return true
     } catch (error) {
-      console.error("[v0] Logout error:", error)
+      console.error(" Logout error:", error)
       return false
     }
   },
