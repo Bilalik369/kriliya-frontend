@@ -1,5 +1,5 @@
 import { View, Text, TextInput, TouchableOpacity, ActivityIndicator, ScrollView } from "react-native";
-import styles from "../../styles/login.style";
+import styles from "../../styles/signup.styles";
 import { Ionicons } from "@expo/vector-icons";
 import COLORS from "../../constants/colors";
 import { useDispatch, useSelector } from "react-redux";

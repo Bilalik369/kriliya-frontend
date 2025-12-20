@@ -23,7 +23,7 @@ export const authService = {
 
   async register(userData) {
     try {
-      console.log(" Sending registration data:", JSON.stringify(userData, null, 2))
+      
       const response = await apiClient.auth.post(ENDPOINTS.AUTH.REGISTER, userData)
       console.log(" Registration response:", response)
 

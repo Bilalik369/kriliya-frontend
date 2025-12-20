@@ -4,17 +4,17 @@ import { NavigationContainer } from "@react-navigation/native"
 
 import { store } from "./src/store/index"
 import AuthStackNavigator from "./src/navigation/AuthStackNavigator"
-// import AppStackNavigator from "./src/navigation/AppStackNavigator" // من بعد
+// import AppStackNavigator from "./src/navigation/AppStackNavigator" 
 
-// Component داخلي باش نقدر نستعمل useSelector
+
 function RootNavigator() {
   const { isAuthenticated } = useSelector((state) => state.auth)
 
   return (
     <NavigationContainer>
       {isAuthenticated ? (
-        // <AppStackNavigator />
-        <AuthStackNavigator /> // مؤقتاً
+        
+        <AuthStackNavigator />
       ) : (
         <AuthStackNavigator />
       )}
