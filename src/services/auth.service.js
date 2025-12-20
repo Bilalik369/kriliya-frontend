@@ -9,11 +9,13 @@ export const authService = {
         email,
         password,
       })
+   
 
       if (response.token) {
         await storage.setItem(StorageKeys.AUTH_TOKEN, response.token)
         await storage.setItem(StorageKeys.USER, response.user)
       }
+      console.log(" Login successful:", response.user)
 
       return response
     } catch (error) {
