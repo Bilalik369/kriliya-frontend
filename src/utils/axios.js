@@ -5,14 +5,16 @@ import { StorageKeys } from "./storage"
 
 const createAxiosInstance = (baseURL) => {
   const instance = axios.create({
-    baseURL,
+    baseURL: API_CONFIG.GATEWAY_URL,
     timeout: API_CONFIG.TIMEOUT,
   })
 
   instance.interceptors.request.use(
     async (config) => {
-      const token = await AsyncStorage.getItem(StorageKeys.AUTH_TOKEN)
-      if (token) {
+      const tokenString = await AsyncStorage.getItem(StorageKeys.AUTH_TOKEN)
+      if (tokenString) {
+       
+        const token = JSON.parse(tokenString)
         config.headers.Authorization = `Bearer ${token}`
       }
       return config
@@ -31,5 +33,5 @@ const createAxiosInstance = (baseURL) => {
 export const apiClient = {
   gateway: createAxiosInstance(API_CONFIG.GATEWAY_URL),
   auth: createAxiosInstance(API_CONFIG.AUTH_SERVICE),
-
+  items: createAxiosInstance(API_CONFIG.ITEMS_SERVICE),
 }
