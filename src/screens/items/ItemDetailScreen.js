@@ -37,8 +37,10 @@ export default function ItemDetailScreen({ route, navigation }) {
     const [showCreatedBanner, setShowCreatedBanner] = useState(!!justCreated);
     const [deleteLoading, setDeleteLoading] = useState(false);
     const [deleteModalVisible, setDeleteModalVisible] = useState(false);
+    const [imageViewerVisible, setImageViewerVisible] = useState(false);
     const [toast, setToast] = useState({ visible: false, type: "success", message: "" });
     const imageScrollRef = useRef(null);
+    const fullscreenScrollRef = useRef(null);
     const toastTimerRef = useRef(null);
     const goBackAfterDeleteRef = useRef(null);
 
@@ -212,6 +214,14 @@ export default function ItemDetailScreen({ route, navigation }) {
         if (index >= 0 && index < imageUris.length) setActiveImageIndex(index);
     };
 
+    const openImageViewer = (index = 0) => {
+        setActiveImageIndex(index);
+        setImageViewerVisible(true);
+        setTimeout(() => {
+            fullscreenScrollRef.current?.scrollTo({ x: screenWidth * index, animated: false });
+        }, 0);
+    };
+
     return (
         <View style={styles.container}>
             {showCreatedBanner && (
@@ -248,11 +258,17 @@ export default function ItemDetailScreen({ route, navigation }) {
                             >
                                 {imageUris.map((uri, index) => (
                                     <View key={`${uri}-${index}`} style={[styles.imagePage, { width: screenWidth }]}>
-                                        <Image
-                                            source={{ uri }}
-                                            style={styles.itemImage}
-                                            resizeMode="cover"
-                                        />
+                                        <TouchableOpacity
+                                            activeOpacity={0.95}
+                                            style={styles.imageTouchArea}
+                                            onPress={() => openImageViewer(index)}
+                                        >
+                                            <Image
+                                                source={{ uri }}
+                                                style={styles.itemImage}
+                                                resizeMode="cover"
+                                            />
+                                        </TouchableOpacity>
                                     </View>
                                 ))}
                             </ScrollView>
@@ -478,6 +494,59 @@ export default function ItemDetailScreen({ route, navigation }) {
                             </TouchableOpacity>
                         </View>
                     </View>
+                </View>
+            </Modal>
+
+            <Modal
+                visible={imageViewerVisible}
+                transparent
+                animationType="fade"
+                onRequestClose={() => setImageViewerVisible(false)}
+            >
+                <View style={styles.imageViewerOverlay}>
+                    <TouchableOpacity
+                        style={styles.imageViewerClose}
+                        onPress={() => setImageViewerVisible(false)}
+                        accessibilityRole="button"
+                    >
+                        <Ionicons name="close" size={26} color={COLORS.white} />
+                    </TouchableOpacity>
+
+                    <ScrollView
+                        ref={fullscreenScrollRef}
+                        horizontal
+                        pagingEnabled
+                        showsHorizontalScrollIndicator={false}
+                        onMomentumScrollEnd={onImageScroll}
+                        onScrollEndDrag={onImageScroll}
+                        scrollEventThrottle={16}
+                        style={styles.imageViewerPager}
+                        contentContainerStyle={{ width: screenWidth * imageUris.length }}
+                    >
+                        {imageUris.map((uri, index) => (
+                            <View
+                                key={`fullscreen-${uri}-${index}`}
+                                style={[styles.imageViewerPage, { width: screenWidth }]}
+                            >
+                                <Image source={{ uri }} style={styles.imageViewerImage} resizeMode="contain" />
+                            </View>
+                        ))}
+                    </ScrollView>
+
+                    {imageUris.length > 1 && (
+                        <View style={styles.imageViewerDots} pointerEvents="none">
+                            {imageUris.map((_, i) => (
+                                <View
+                                    key={`viewer-dot-${i}`}
+                                    style={[
+                                        styles.pagerDot,
+                                        styles.imageViewerDot,
+                                        i === activeImageIndex && styles.pagerDotActive,
+                                    ]}
+                                />
+                            ))}
+                        </View>
+                    )}
                 </View>
             </Modal>
 

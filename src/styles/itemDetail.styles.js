@@ -87,6 +87,10 @@ const styles = StyleSheet.create({
     justifyContent: "center",
     alignItems: "center",
   },
+  imageTouchArea: {
+    width: "100%",
+    height: "100%",
+  },
   itemImage: {
     width: "100%",
     height: "100%",
@@ -112,6 +116,48 @@ const styles = StyleSheet.create({
     backgroundColor: COLORS.white,
     width: 18,
     borderRadius: 4,
+  },
+  imageViewerOverlay: {
+    flex: 1,
+    backgroundColor: "rgba(0,0,0,0.94)",
+    justifyContent: "center",
+  },
+  imageViewerClose: {
+    position: "absolute",
+    top: 52,
+    right: 16,
+    zIndex: 50,
+    width: 40,
+    height: 40,
+    borderRadius: 20,
+    backgroundColor: "rgba(255,255,255,0.2)",
+    justifyContent: "center",
+    alignItems: "center",
+  },
+  imageViewerPager: {
+    width: width,
+    flexGrow: 0,
+  },
+  imageViewerPage: {
+    height: width * 1.2,
+    justifyContent: "center",
+    alignItems: "center",
+  },
+  imageViewerImage: {
+    width: "100%",
+    height: "100%",
+  },
+  imageViewerDots: {
+    position: "absolute",
+    bottom: 42,
+    left: 0,
+    right: 0,
+    flexDirection: "row",
+    justifyContent: "center",
+    alignItems: "center",
+  },
+  imageViewerDot: {
+    backgroundColor: "rgba(255,255,255,0.45)",
   },
   noImageContainer: {
     width: "100%",
