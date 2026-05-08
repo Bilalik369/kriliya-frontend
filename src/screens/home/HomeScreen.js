@@ -13,6 +13,7 @@ import {
 } from "react-native";
 import { Ionicons } from "@expo/vector-icons";
 import { useSelector } from "react-redux";
+import { useSafeAreaInsets } from "react-native-safe-area-context";
 import styles from "../../styles/home.styles";
 import COLORS from "../../constants/colors";
 import { itemsService } from "../../services/items.service";
@@ -32,6 +33,7 @@ const CATEGORIES = [
 
 export default function HomeScreen({ navigation }) {
     const { isAuthenticated, user } = useSelector((state) => state.auth) || {};
+    const insets = useSafeAreaInsets();
 
     const [items, setItems] = useState([]);
     const [loading, setLoading] = useState(true);
@@ -210,11 +212,14 @@ export default function HomeScreen({ navigation }) {
     const renderHeader = () => (
         <>
             {/* Header */}
-            <View style={styles.header}>
+            <View
+                style={[
+                    styles.header,
+                    { paddingTop: Math.max(insets.top, StatusBar.currentHeight || 0) + 6 },
+                ]}
+            >
                 <View style={styles.headerTop}>
-                    <View style={styles.greetingWrapper}>
-                        <Image source={require("../../assets/loggo.png")} style={styles.logoImage} />
-                    </View>
+                    <View style={styles.greetingWrapper} />
                     <View style={styles.headerIcons}>
                         {isAuthenticated && (
                             <TouchableOpacity

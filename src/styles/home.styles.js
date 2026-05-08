@@ -12,20 +12,20 @@ const styles = StyleSheet.create({
 
   header: {
     backgroundColor: COLORS.background,
-    paddingTop: 56,
-    paddingBottom: 8,
+    paddingTop: 10,
+    paddingBottom: 2,
     paddingHorizontal: 16,
   },
   headerTop: {
     flexDirection: "row",
     justifyContent: "space-between",
     alignItems: "center",
-    marginBottom: 16,
+    marginBottom: 8,
   },
   greetingWrapper: {
-    flex: 1,
+    flex: 0,
     alignItems: "flex-start",
-    marginLeft: -16,
+    marginLeft: -8,
   },
   greetingHello: {
     fontSize: 13,
@@ -33,11 +33,11 @@ const styles = StyleSheet.create({
     fontWeight: "500",
   },
   logoImage: {
-    width: 250,
-    height: 80,
+    width: 160,
+    height: 56,
     resizeMode: "contain",
-    marginTop: 2,
-    marginLeft: -54,
+    marginTop: 0,
+    marginLeft: 0,
   },
   headerIcons: {
     flexDirection: "row",
