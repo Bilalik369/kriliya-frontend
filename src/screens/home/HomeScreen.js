@@ -213,10 +213,7 @@ export default function HomeScreen({ navigation }) {
             <View style={styles.header}>
                 <View style={styles.headerTop}>
                     <View style={styles.greetingWrapper}>
-                        <Text style={styles.greetingHello}>
-                            {isAuthenticated ? `Hi, ${user?.firstName || "there"}` : "Welcome"}
-                        </Text>
-                        <Text style={styles.logo}>KriliYa</Text>
+                        <Image source={require("../../assets/loggo.png")} style={styles.logoImage} />
                     </View>
                     <View style={styles.headerIcons}>
                         {isAuthenticated && (

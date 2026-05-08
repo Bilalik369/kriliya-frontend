@@ -24,17 +24,20 @@ const styles = StyleSheet.create({
   },
   greetingWrapper: {
     flex: 1,
+    alignItems: "flex-start",
+    marginLeft: -16,
   },
   greetingHello: {
     fontSize: 13,
     color: COLORS.textSecondary,
     fontWeight: "500",
   },
-  logo: {
-    fontSize: 24,
-    fontWeight: "800",
-    color: COLORS.textPrimary,
-    letterSpacing: -0.3,
+  logoImage: {
+    width: 250,
+    height: 80,
+    resizeMode: "contain",
+    marginTop: 2,
+    marginLeft: -54,
   },
   headerIcons: {
     flexDirection: "row",

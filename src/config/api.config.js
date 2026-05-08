@@ -1,7 +1,7 @@
 const gateway =
   process.env.EXPO_PUBLIC_GATEWAY_URL ||
   process.env.REACT_APP_GATEWAY_URL ||
-  "http://localhost:3510"
+  "https://kriliya-gateway-cgb4ddhgcsfqe4bk.francecentral-01.azurewebsites.net"
 
 export const API_CONFIG = {
   GATEWAY_URL: gateway,
