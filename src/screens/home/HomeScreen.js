@@ -250,9 +250,11 @@ export default function HomeScreen({ navigation }) {
 
             {/* Promo Banner */}
             <View style={styles.promoBanner}>
+                <View style={styles.promoIcon}>
+                    <Image source={require("../../assets/phkey.png")} style={styles.promoIconImage} />
+                </View>
                 <View style={styles.promoTextWrap}>
-                    <Text style={styles.promoTitle}>Rent smarter, save more</Text>
-                    <Text style={styles.promoSubtitle}>Find quality items near you for any occasion.</Text>
+                    <Text style={styles.promoTitle}>Kriliya: Kri o wffer... wla kri o rbeh!</Text>
                     <TouchableOpacity
                         style={styles.promoButton}
                         activeOpacity={0.85}
@@ -260,9 +262,6 @@ export default function HomeScreen({ navigation }) {
                     >
                         <Text style={styles.promoButtonText}>Browse Now</Text>
                     </TouchableOpacity>
-                </View>
-                <View style={styles.promoIcon}>
-                    <Ionicons name="bag-handle-outline" size={32} color={COLORS.white} />
                 </View>
             </View>
 
