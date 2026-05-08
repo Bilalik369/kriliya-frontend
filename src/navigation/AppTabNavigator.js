@@ -1,13 +1,19 @@
 import { createBottomTabNavigator } from "@react-navigation/bottom-tabs"
 import { Ionicons } from "@expo/vector-icons"
 import { Platform } from "react-native"
+import { useSafeAreaInsets } from "react-native-safe-area-context"
 import HomeScreen from "../screens/home/HomeScreen"
 import MyItemsScreen from "../screens/items/MyItemsScreen"
+import ProfileScreen from "../screens/profile/ProfileScreen"
 import COLORS from "../constants/colors"
 
 const Tab = createBottomTabNavigator()
 
 export default function AppTabNavigator() {
+  const insets = useSafeAreaInsets()
+  const bottomInset = Math.max(insets.bottom, Platform.OS === "android" ? 18 : 10)
+  const tabBarHeight = 52 + bottomInset + 20
+
   return (
     <Tab.Navigator
       screenOptions={({ route }) => ({
@@ -31,9 +37,9 @@ export default function AppTabNavigator() {
           backgroundColor: COLORS.cardBackground,
           borderTopColor: COLORS.border,
           borderTopWidth: 1,
-          paddingBottom: Platform.OS === "ios" ? 24 : 10,
-          paddingTop: 10,
-          height: Platform.OS === "ios" ? 84 : 68,
+          paddingBottom: bottomInset,
+          paddingTop: 8,
+          height: tabBarHeight,
           shadowColor: COLORS.shadow,
           shadowOffset: { width: 0, height: -4 },
           shadowOpacity: 1,
@@ -59,6 +65,11 @@ export default function AppTabNavigator() {
         name="MyItemsTab"
         component={MyItemsScreen}
         options={{ tabBarLabel: "My Items" }}
+      />
+      <Tab.Screen
+        name="ProfileTab"
+        component={ProfileScreen}
+        options={{ tabBarLabel: "Profile" }}
       />
     </Tab.Navigator>
   )

@@ -73,9 +73,32 @@ export const authService = {
 
   _handleError(error) {
     if (error.response) {
-      
-      return new Error(error.response.data?.msg || error.response.data?.message || "An error occurred")
+      const responseData = error.response.data
+      if (typeof responseData === "string") {
+        try {
+          const parsed = JSON.parse(responseData)
+          return new Error(parsed?.msg || parsed?.message || responseData)
+        } catch (_e) {
+          return new Error(responseData)
+        }
+      }
+      return new Error(
+        responseData?.msg ||
+          responseData?.message ||
+          "An error occurred",
+      )
     }
-    return new Error(error.message || "Network error")
+    const msg = String(error.message || "")
+    if (error.code === "ECONNABORTED" || msg.toLowerCase().includes("timeout")) {
+      return new Error(
+        "The server took too long to respond. Wait a moment and try again (Azure may be waking up).",
+      )
+    }
+    if (msg === "Network Error" || error.code === "ERR_NETWORK") {
+      return new Error(
+        "Network error: check your internet connection and that the gateway URL is reachable from this device.",
+      )
+    }
+    return new Error(msg || "Network error")
   },
 }

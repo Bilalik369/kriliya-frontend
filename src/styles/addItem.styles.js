@@ -6,14 +6,18 @@ const styles = StyleSheet.create({
     flex: 1,
     backgroundColor: COLORS.background,
   },
+  scrollFill: {
+    flex: 1,
+  },
   scrollContent: {
     padding: 16,
-    paddingBottom: 100,
+    paddingBottom: 24,
+    flexGrow: 1,
   },
   header: {
     flexDirection: "row",
     alignItems: "center",
-    paddingTop: 50,
+    paddingTop: 12,
     paddingBottom: 16,
     paddingHorizontal: 16,
     backgroundColor: COLORS.background,

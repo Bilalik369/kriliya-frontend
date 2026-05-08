@@ -47,6 +47,8 @@ export default function RegisterScreen({ navigation }) {
     };
 
     const handleRegister = async () => {
+        if (loading) return;
+        const normalizedEmail = email.trim().toLowerCase();
         if (!firstName.trim() || !lastName.trim() || !email.trim() || !password.trim() || !phone.trim()) {
             dispatch(setError(USER_MESSAGES.auth.registerAllFieldsRequired));
             return;
@@ -63,7 +65,7 @@ export default function RegisterScreen({ navigation }) {
             const response = await authService.register({
                 firstName: firstName.trim(),
                 lastName: lastName.trim(),
-                email: email.trim().toLowerCase(),
+                email: normalizedEmail,
                 password,
                 phone: phone.trim(),
                 address: {
@@ -74,7 +76,25 @@ export default function RegisterScreen({ navigation }) {
             dispatch(setUser(response.user));
             dispatch(setToken(response.token));
         } catch (error) {
-            dispatch(setError(error.message));
+           
+            const message = String(error?.message || "");
+            const isNetworkLikeError =
+                message.includes("Network error") || message.toLowerCase().includes("timeout");
+            const isAlreadyRegistered = message.toLowerCase().includes("already registered");
+
+            if (isNetworkLikeError || isAlreadyRegistered) {
+                try {
+                    const loginResponse = await authService.login(normalizedEmail, password);
+                    dispatch(setUser(loginResponse.user));
+                    dispatch(setToken(loginResponse.token));
+                    dispatch(setError(null));
+                    return;
+                } catch (_loginError) {
+                  
+                }
+            }
+
+            dispatch(setError(message));
         } finally {
             dispatch(setLoading(false));
         }

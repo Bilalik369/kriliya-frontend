@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, useRef } from "react";
 import {
     View,
     Text,
@@ -8,7 +8,11 @@ import {
     ActivityIndicator,
     Alert,
     Image,
+    Platform,
+    KeyboardAvoidingView,
 } from "react-native";
+import { useSafeAreaInsets } from "react-native-safe-area-context";
+import { useKeyboardHeight } from "../../hooks/useKeyboardHeight";
 import * as ImagePicker from "expo-image-picker";
 import { Ionicons } from "@expo/vector-icons";
 import { useDispatch, useSelector } from "react-redux";
@@ -55,6 +59,19 @@ export default function EditItemScreen({ route, navigation }) {
     const [city, setCity] = useState(item.location?.city || "");
     const [address, setAddress] = useState(item.location?.address || "");
     const [newImageAssets, setNewImageAssets] = useState([]);
+
+    const insets = useSafeAreaInsets();
+    const keyboardHeight = useKeyboardHeight();
+    const scrollRef = useRef(null);
+
+    const scrollPaddingBottom =
+        32 + insets.bottom + keyboardHeight + (Platform.OS === "android" ? 32 : 16);
+
+    const scrollToLocation = () => {
+        requestAnimationFrame(() => {
+            scrollRef.current?.scrollToEnd({ animated: true });
+        });
+    };
 
     const existingCount = item.images?.length || 0;
     const canAddMorePhotos = existingCount + newImageAssets.length < MAX_ITEM_IMAGES;
@@ -153,7 +170,7 @@ export default function EditItemScreen({ route, navigation }) {
     return (
         <View style={styles.container}>
             {/* Header */}
-            <View style={styles.header}>
+            <View style={[styles.header, { paddingTop: insets.top + 10 }]}>
                 <TouchableOpacity
                     style={styles.backButton}
                     onPress={() => navigation.goBack()}
@@ -163,7 +180,19 @@ export default function EditItemScreen({ route, navigation }) {
                 <Text style={styles.headerTitle}>Edit Item</Text>
             </View>
 
-            <ScrollView style={styles.scrollContent}>
+            <KeyboardAvoidingView
+                style={styles.scrollFill}
+                behavior={Platform.OS === "ios" ? "padding" : undefined}
+                keyboardVerticalOffset={0}
+            >
+                <ScrollView
+                    ref={scrollRef}
+                    style={styles.scrollFill}
+                    contentContainerStyle={[styles.scrollContent, { paddingBottom: scrollPaddingBottom }]}
+                    keyboardShouldPersistTaps="handled"
+                    keyboardDismissMode="interactive"
+                    showsVerticalScrollIndicator
+                >
                 {/* Basic Info */}
                 <View style={styles.section}>
                     <Text style={styles.sectionTitle}>Basic Information</Text>
@@ -355,6 +384,7 @@ export default function EditItemScreen({ route, navigation }) {
                             placeholderTextColor={COLORS.placeholderText}
                             value={city}
                             onChangeText={setCity}
+                            onFocus={scrollToLocation}
                         />
                     </View>
 
@@ -366,6 +396,7 @@ export default function EditItemScreen({ route, navigation }) {
                             placeholderTextColor={COLORS.placeholderText}
                             value={address}
                             onChangeText={setAddress}
+                            onFocus={scrollToLocation}
                         />
                     </View>
                 </View>
@@ -385,7 +416,8 @@ export default function EditItemScreen({ route, navigation }) {
                         <Text style={styles.submitButtonText}>Update Item</Text>
                     )}
                 </TouchableOpacity>
-            </ScrollView>
+                </ScrollView>
+            </KeyboardAvoidingView>
         </View>
     );
 }

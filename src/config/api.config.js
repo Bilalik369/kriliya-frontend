@@ -1,11 +1,17 @@
-const gateway =
-  process.env.EXPO_PUBLIC_GATEWAY_URL ||
-  process.env.REACT_APP_GATEWAY_URL ||
+const DEFAULT_GATEWAY =
   "https://kriliya-gateway-cgb4ddhgcsfqe4bk.francecentral-01.azurewebsites.net"
+
+const raw =
+  (process.env.EXPO_PUBLIC_GATEWAY_URL || process.env.REACT_APP_GATEWAY_URL || "")
+    .trim() || DEFAULT_GATEWAY
+
+
+const gateway = raw.replace(/\/+$/, "")
 
 export const API_CONFIG = {
   GATEWAY_URL: gateway,
-  TIMEOUT: 15000,
+
+  TIMEOUT: 60000,
   UPLOAD_TIMEOUT: 120000,
 }
 
