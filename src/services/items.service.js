@@ -3,6 +3,7 @@ import { apiClient } from "../utils/axios"
 import { API_CONFIG, ENDPOINTS } from "../config/api.config"
 
 const MAX_IMAGES_PER_REQUEST = 5
+const RETRY_DELAY_MS = 1200
 
 function appendItemFieldsToFormData(formData, itemData) {
   formData.append("title", String(itemData.title ?? ""))
@@ -45,6 +46,38 @@ async function appendImageAssetsToFormData(formData, assets) {
         name: filename,
       })
     }
+  }
+}
+
+function isNetworkLikeError(error) {
+  const message = String(error?.message || "").toLowerCase()
+  return (
+    error?.code === "ECONNABORTED" ||
+    error?.code === "ERR_NETWORK" ||
+    message.includes("network error") ||
+    message.includes("timeout")
+  )
+}
+
+function sleep(ms) {
+  return new Promise((resolve) => setTimeout(resolve, ms))
+}
+
+function getMultipartConfig() {
+  // In React Native, maxBodyLength/maxContentLength can cause XHR "Network Error"
+  // with multipart uploads. Keep config minimal on native devices.
+  if (Platform.OS === "web") {
+    return {
+      timeout: API_CONFIG.UPLOAD_TIMEOUT,
+      maxBodyLength: Infinity,
+      maxContentLength: Infinity,
+      headers: { "Content-Type": "multipart/form-data" },
+    }
+  }
+
+  return {
+    timeout: API_CONFIG.UPLOAD_TIMEOUT,
+    headers: { "Content-Type": "multipart/form-data" },
   }
 }
 
@@ -91,16 +124,34 @@ export const itemsService = {
   async createItem(itemData, imageAssets = []) {
     try {
       if (!imageAssets?.length) {
-        return await apiClient.items.post(ENDPOINTS.ITEMS.CREATE, itemData)
+        return await apiClient.items.post(ENDPOINTS.ITEMS.CREATE, itemData, {
+          timeout: API_CONFIG.UPLOAD_TIMEOUT,
+        })
       }
       const formData = new FormData()
       appendItemFieldsToFormData(formData, itemData)
       await appendImageAssetsToFormData(formData, imageAssets)
-      return await apiClient.items.post(ENDPOINTS.ITEMS.CREATE, formData, {
-        timeout: API_CONFIG.UPLOAD_TIMEOUT,
-        maxBodyLength: Infinity,
-        maxContentLength: Infinity,
-      })
+      try {
+        return await apiClient.items.post(
+          ENDPOINTS.ITEMS.CREATE,
+          formData,
+          getMultipartConfig(),
+        )
+      } catch (firstError) {
+        // Mobile networks can drop large multipart requests; retry once.
+        if (!isNetworkLikeError(firstError)) throw firstError
+        await sleep(RETRY_DELAY_MS)
+
+        const retryFormData = new FormData()
+        appendItemFieldsToFormData(retryFormData, itemData)
+        await appendImageAssetsToFormData(retryFormData, imageAssets)
+
+        return await apiClient.items.post(
+          ENDPOINTS.ITEMS.CREATE,
+          retryFormData,
+          getMultipartConfig(),
+        )
+      }
     } catch (error) {
       throw this._handleError(error)
     }
@@ -114,11 +165,11 @@ export const itemsService = {
       const formData = new FormData()
       appendItemFieldsToFormData(formData, itemData)
       await appendImageAssetsToFormData(formData, newImageAssets)
-      return await apiClient.items.put(`${ENDPOINTS.ITEMS.UPDATE}/${itemId}`, formData, {
-        timeout: API_CONFIG.UPLOAD_TIMEOUT,
-        maxBodyLength: Infinity,
-        maxContentLength: Infinity,
-      })
+      return await apiClient.items.put(
+        `${ENDPOINTS.ITEMS.UPDATE}/${itemId}`,
+        formData,
+        getMultipartConfig(),
+      )
     } catch (error) {
       throw this._handleError(error)
     }
@@ -147,8 +198,21 @@ export const itemsService = {
 
   _handleError(error) {
     if (error.response) {
-      return new Error(error.response.data?.msg || error.response.data?.message || "An error occurred")
+      const responseData = error.response.data
+      if (typeof responseData === "string") {
+        try {
+          const parsed = JSON.parse(responseData)
+          return new Error(parsed?.msg || parsed?.message || responseData)
+        } catch (_e) {
+          return new Error(responseData)
+        }
+      }
+      return new Error(responseData?.msg || responseData?.message || "An error occurred")
     }
-    return new Error(error.message || "Network error")
+    const message = String(error?.message || "")
+    if (message.toLowerCase().includes("network error")) {
+      return new Error("Network error. Verify phone internet and gateway URL.")
+    }
+    return new Error(message || "Network error")
   },
 }

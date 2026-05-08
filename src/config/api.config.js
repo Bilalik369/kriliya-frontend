@@ -1,3 +1,5 @@
+import { Platform } from "react-native"
+
 const DEFAULT_GATEWAY =
   "https://kriliya-gateway-cgb4ddhgcsfqe4bk.francecentral-01.azurewebsites.net"
 
@@ -6,13 +8,27 @@ const raw =
     .trim() || DEFAULT_GATEWAY
 
 
-const gateway = raw.replace(/\/+$/, "")
+const normalizedGateway = raw.replace(/\/+$/, "")
+
+const isLocalhostGateway =
+  normalizedGateway.includes("localhost") ||
+  normalizedGateway.includes("127.0.0.1") ||
+  normalizedGateway.includes("10.0.2.2")
+const isInsecureGateway = normalizedGateway.startsWith("http://")
+const isIpGateway = /^https?:\/\/\d{1,3}(\.\d{1,3}){3}(:\d+)?/i.test(normalizedGateway)
+
+
+const gateway =
+  Platform.OS !== "web" && (isLocalhostGateway || isInsecureGateway || isIpGateway)
+    ? DEFAULT_GATEWAY
+    : normalizedGateway
 
 export const API_CONFIG = {
   GATEWAY_URL: gateway,
 
   TIMEOUT: 60000,
-  UPLOAD_TIMEOUT: 120000,
+
+  UPLOAD_TIMEOUT: 240000,
 }
 
 export const ENDPOINTS = {

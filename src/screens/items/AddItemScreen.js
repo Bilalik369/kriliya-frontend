@@ -151,7 +151,26 @@ export default function AddItemScreen({ navigation }) {
                 },
             };
 
-            const response = await itemsService.createItem(itemData, imageAssets);
+            let response;
+            try {
+                response = await itemsService.createItem(itemData, imageAssets);
+            } catch (firstError) {
+                const message = String(firstError?.message || "").toLowerCase();
+                const isImageUploadNetworkIssue =
+                    imageAssets.length > 0 &&
+                    (message.includes("network error") || message.includes("timeout"));
+
+                if (!isImageUploadNetworkIssue) {
+                    throw firstError;
+                }
+
+                
+                response = await itemsService.createItem(itemData, []);
+                Alert.alert(
+                    "Item created",
+                    "Your item was created without images due to upload connection issue. You can add images from Edit Item.",
+                );
+            }
             const created = response?.item;
 
             if (created?._id) {
@@ -179,7 +198,7 @@ export default function AddItemScreen({ navigation }) {
 
     return (
         <View style={styles.container}>
-            {/* Header */}
+            
             <View style={[styles.header, { paddingTop: insets.top + 10 }]}>
                 <TouchableOpacity
                     style={styles.backButton}
