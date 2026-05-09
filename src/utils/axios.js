@@ -29,10 +29,12 @@ const createAxiosInstance = (baseURL) => {
   return instance
 }
 
-const base = API_CONFIG.GATEWAY_URL
+const base = API_CONFIG.BASE_URL
 
 export const apiClient = {
   gateway: createAxiosInstance(base),
   auth: createAxiosInstance(base),
   items: createAxiosInstance(base),
+  booking: createAxiosInstance(base),
+  reviews: createAxiosInstance(base),
 }
