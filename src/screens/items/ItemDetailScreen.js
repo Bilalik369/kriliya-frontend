@@ -314,6 +314,48 @@ export default function ItemDetailScreen({ route, navigation }) {
 
                 {/* Content */}
                 <View style={styles.content}>
+                    {isOwner && (() => {
+                        const ap = currentItem.approvalStatus || "approved";
+                        if (ap === "pending") {
+                            return (
+                                <View style={[styles.ownerApprovalBanner, styles.ownerApprovalPending]}>
+                                    <Ionicons name="time-outline" size={22} color={COLORS.warning} />
+                                    <View style={{ flex: 1 }}>
+                                        <Text style={styles.ownerApprovalTitle}>Pending admin review</Text>
+                                        <Text style={styles.ownerApprovalBody}>
+                                            Your listing is saved but not visible to others yet. You will receive an email when it is accepted or rejected.
+                                        </Text>
+                                    </View>
+                                </View>
+                            );
+                        }
+                        if (ap === "rejected") {
+                            return (
+                                <View style={[styles.ownerApprovalBanner, styles.ownerApprovalRejected]}>
+                                    <Ionicons name="close-circle-outline" size={22} color={COLORS.error} />
+                                    <View style={{ flex: 1 }}>
+                                        <Text style={styles.ownerApprovalTitle}>Not approved</Text>
+                                        <Text style={styles.ownerApprovalBody}>
+                                            {currentItem.rejectionReason
+                                                ? `Reason: ${currentItem.rejectionReason}`
+                                                : "An administrator did not approve this listing. Check your email for details."}
+                                        </Text>
+                                    </View>
+                                </View>
+                            );
+                        }
+                        return (
+                            <View style={[styles.ownerApprovalBanner, styles.ownerApprovalApproved]}>
+                                <Ionicons name="checkmark-circle-outline" size={22} color={COLORS.success} />
+                                <View style={{ flex: 1 }}>
+                                    <Text style={styles.ownerApprovalTitle}>Published</Text>
+                                    <Text style={styles.ownerApprovalBody}>
+                                        This listing is approved and visible to other users.
+                                    </Text>
+                                </View>
+                            </View>
+                        );
+                    })()}
                     {/* Title & Availability */}
                     <View style={styles.titleRow}>
                         <Text style={styles.title}>{currentItem.title}</Text>
@@ -368,8 +410,18 @@ export default function ItemDetailScreen({ route, navigation }) {
                             </View>
 
                             {/* Availability Control */}
-                            <View style={styles.availabilitySection}>
+                            <View
+                                style={[
+                                    styles.availabilitySection,
+                                    (currentItem.approvalStatus || "approved") !== "approved" && { opacity: 0.45 },
+                                ]}
+                            >
                                 <Text style={styles.sectionTitle}>Update Availability</Text>
+                                {(currentItem.approvalStatus || "approved") !== "approved" ? (
+                                    <Text style={styles.ownerApprovalBody}>
+                                        Availability can be changed after an admin approves your listing.
+                                    </Text>
+                                ) : null}
                                 <View style={styles.availabilityButtons}>
                                     {["available", "rented", "unavailable"].map((status) => (
                                         <TouchableOpacity
@@ -380,7 +432,10 @@ export default function ItemDetailScreen({ route, navigation }) {
                                                 currentItem.availability === status && getAvailabilityStyle(status),
                                             ]}
                                             onPress={() => handleUpdateAvailability(status)}
-                                            disabled={updatingAvailability}
+                                            disabled={
+                                                updatingAvailability ||
+                                                (currentItem.approvalStatus || "approved") !== "approved"
+                                            }
                                         >
                                             <Text
                                                 style={[

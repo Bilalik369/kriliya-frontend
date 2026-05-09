@@ -127,6 +127,40 @@ export default function MyItemsScreen({ navigation }) {
                             {item.title}
                         </Text>
                         <Text style={styles.itemCategory}>{item.category}</Text>
+                        {(() => {
+                            const st = item.approvalStatus || "approved";
+                            if (st === "approved") {
+                                return (
+                                    <View style={styles.approvalRow}>
+                                        <View style={[styles.approvalPill, styles.approvalPillApproved]}>
+                                            <Text style={[styles.approvalPillText, styles.approvalTextApproved]}>
+                                                Published
+                                            </Text>
+                                        </View>
+                                    </View>
+                                );
+                            }
+                            if (st === "rejected") {
+                                return (
+                                    <View style={styles.approvalRow}>
+                                        <View style={[styles.approvalPill, styles.approvalPillRejected]}>
+                                            <Text style={[styles.approvalPillText, styles.approvalTextRejected]}>
+                                                Rejected
+                                            </Text>
+                                        </View>
+                                    </View>
+                                );
+                            }
+                            return (
+                                <View style={styles.approvalRow}>
+                                    <View style={[styles.approvalPill, styles.approvalPillPending]}>
+                                        <Text style={[styles.approvalPillText, styles.approvalTextPending]}>
+                                            Pending review
+                                        </Text>
+                                    </View>
+                                </View>
+                            );
+                        })()}
                     </View>
 
                     <View>

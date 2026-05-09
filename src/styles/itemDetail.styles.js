@@ -36,6 +36,38 @@ const styles = StyleSheet.create({
     color: COLORS.textPrimary,
     lineHeight: 18,
   },
+  ownerApprovalBanner: {
+    flexDirection: "row",
+    alignItems: "flex-start",
+    gap: 10,
+    padding: 12,
+    borderRadius: 14,
+    marginBottom: 14,
+    borderWidth: 1,
+  },
+  ownerApprovalPending: {
+    backgroundColor: COLORS.warningLight,
+    borderColor: COLORS.warning,
+  },
+  ownerApprovalApproved: {
+    backgroundColor: COLORS.successLight,
+    borderColor: COLORS.success,
+  },
+  ownerApprovalRejected: {
+    backgroundColor: COLORS.errorLight,
+    borderColor: COLORS.error,
+  },
+  ownerApprovalTitle: {
+    fontSize: 13,
+    fontWeight: "800",
+    color: COLORS.textPrimary,
+    marginBottom: 4,
+  },
+  ownerApprovalBody: {
+    fontSize: 12,
+    color: COLORS.textSecondary,
+    lineHeight: 17,
+  },
   loadingContainer: {
     flex: 1,
     justifyContent: "center",

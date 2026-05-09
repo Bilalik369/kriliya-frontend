@@ -154,6 +154,42 @@ const styles = StyleSheet.create({
     textTransform: "capitalize",
     fontWeight: "500",
   },
+  approvalRow: {
+    flexDirection: "row",
+    alignItems: "center",
+    marginBottom: 6,
+    gap: 6,
+  },
+  approvalPill: {
+    alignSelf: "flex-start",
+    paddingHorizontal: 8,
+    paddingVertical: 3,
+    borderRadius: 8,
+  },
+  approvalPillPending: {
+    backgroundColor: COLORS.warningLight,
+  },
+  approvalPillApproved: {
+    backgroundColor: COLORS.successLight,
+  },
+  approvalPillRejected: {
+    backgroundColor: COLORS.errorLight,
+  },
+  approvalPillText: {
+    fontSize: 10,
+    fontWeight: "800",
+    textTransform: "uppercase",
+    letterSpacing: 0.3,
+  },
+  approvalTextPending: {
+    color: COLORS.warning,
+  },
+  approvalTextApproved: {
+    color: COLORS.success,
+  },
+  approvalTextRejected: {
+    color: COLORS.error,
+  },
   itemPrice: {
     fontSize: 16,
     fontWeight: "800",

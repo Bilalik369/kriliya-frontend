@@ -2,14 +2,18 @@ import { createBottomTabNavigator } from "@react-navigation/bottom-tabs"
 import { Ionicons } from "@expo/vector-icons"
 import { Platform } from "react-native"
 import { useSafeAreaInsets } from "react-native-safe-area-context"
+import { useSelector } from "react-redux"
 import HomeScreen from "../screens/home/HomeScreen"
 import MyItemsScreen from "../screens/items/MyItemsScreen"
 import ProfileScreen from "../screens/profile/ProfileScreen"
+import AdminItemsScreen from "../screens/admin/AdminItemsScreen"
 import COLORS from "../constants/colors"
 
 const Tab = createBottomTabNavigator()
 
 export default function AppTabNavigator() {
+  const { user } = useSelector((state) => state.auth) || {}
+  const isAdmin = user?.role === "admin"
   const insets = useSafeAreaInsets()
   const bottomInset = Math.max(insets.bottom, Platform.OS === "android" ? 18 : 10)
   const tabBarHeight = 52 + bottomInset + 20
@@ -27,6 +31,8 @@ export default function AppTabNavigator() {
             iconName = focused ? "cube" : "cube-outline"
           } else if (route.name === "ProfileTab") {
             iconName = focused ? "person" : "person-outline"
+          } else if (route.name === "AdminTab") {
+            iconName = focused ? "shield-checkmark" : "shield-checkmark-outline"
           }
 
           return <Ionicons name={iconName} size={focused ? 24 : 22} color={color} />
@@ -71,6 +77,13 @@ export default function AppTabNavigator() {
         component={ProfileScreen}
         options={{ tabBarLabel: "Profile" }}
       />
+      {isAdmin ? (
+        <Tab.Screen
+          name="AdminTab"
+          component={AdminItemsScreen}
+          options={{ tabBarLabel: "Admin" }}
+        />
+      ) : null}
     </Tab.Navigator>
   )
 }

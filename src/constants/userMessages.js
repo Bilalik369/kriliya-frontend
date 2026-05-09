@@ -34,6 +34,7 @@ export const USER_MESSAGES = {
     createFallbackTitle: "Success",
     createFallbackBody: "Your listing was created successfully.",
     createToastAndroid: "Listing created successfully",
-    createBanner: "Listing created successfully. You can review details or update availability here.",
+    createBanner:
+      "Listing saved. It will stay private until an admin approves it — you will get an email when it is accepted or rejected.",
   },
 }

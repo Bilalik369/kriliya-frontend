@@ -196,6 +196,30 @@ export const itemsService = {
     }
   },
 
+  async getPendingItemsForAdmin() {
+    try {
+      return await apiClient.items.get(ENDPOINTS.ITEMS.GET_PENDING_ADMIN)
+    } catch (error) {
+      throw this._handleError(error)
+    }
+  },
+
+  async approveItemByAdmin(itemId) {
+    try {
+      return await apiClient.items.patch(`${ENDPOINTS.ITEMS.APPROVE_ADMIN}/${itemId}/approve`)
+    } catch (error) {
+      throw this._handleError(error)
+    }
+  },
+
+  async rejectItemByAdmin(itemId, reason = "") {
+    try {
+      return await apiClient.items.patch(`${ENDPOINTS.ITEMS.REJECT_ADMIN}/${itemId}/reject`, { reason })
+    } catch (error) {
+      throw this._handleError(error)
+    }
+  },
+
   _handleError(error) {
     if (error.response) {
       const responseData = error.response.data
